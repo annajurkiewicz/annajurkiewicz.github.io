@@ -67,12 +67,13 @@ html[data-bg="on"] .contour{ display:none; }
 .cavemask{ position:fixed; inset:0; z-index:-1; background:var(--paper); filter:url(#cutout); pointer-events:none; display:none; }
 html[data-approach="cavemask"] .cavemask{ display:block; }
 /* keep the left solid; open the cracks toward the right where there is less text */
-.cavefill{ position:fixed; inset:0; z-index:0; pointer-events:none; display:none; background:linear-gradient(100deg, var(--paper) 0%, var(--paper) 32%, transparent 74%); }
+.cavefill{ position:fixed; inset:0; z-index:0; pointer-events:none; display:none; background:linear-gradient(100deg, var(--paper) 0%, var(--paper) 50%, transparent 88%); }
 html[data-approach="cavemask"] .cavefill{ display:block; }
 html[data-approach="cavemask"] .bgscrim{ display:none; }
 html[data-approach="cavemask"] .contour{ display:none; }
+html[data-approach="cavemask"] .grain{ display:none; }   /* grain is a full-screen blended turbulence layer; drop it here for performance */
 /* readability: calmer video through the holes + a paper halo behind text */
-html[data-approach="cavemask"] .bgvideo{ filter:grayscale(.4) brightness(.9) contrast(.9) blur(2px); }
+html[data-approach="cavemask"] .bgvideo{ filter:grayscale(.5) brightness(.92) contrast(.95); }
 html[data-approach="cavemask"] .nav,
 html[data-approach="cavemask"] .hero h1,
 html[data-approach="cavemask"] .hero .role,
