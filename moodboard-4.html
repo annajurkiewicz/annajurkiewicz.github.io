@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" data-torch="on" data-springtails="on" data-deeptime="on" data-dissolve="on" data-invert="on" data-view="desktop">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anna Jurkiewicz — experiments, draft 4</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;600&family=Space+Grotesk:wght@500;700&family=Space+Mono:wght@400&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --paper:#EAE6DB; --ink:#16140E; --line:rgba(22,20,14,.18);
+  --head:"Space Grotesk", system-ui, sans-serif; --body:"Inter Tight", system-ui, sans-serif; --mono:"Space Mono", monospace;
+  --r:170px;            /* torch radius */
+}
+html[data-invert="on"]{ --paper:#16140E; --ink:#EAE6DB; --line:rgba(234,230,219,.2); }
+
+*{ box-sizing:border-box; }
+html,body{ margin:0; }
+body{ background:var(--paper); color:var(--ink); font-family:var(--body); font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased; }
+/* deep-time text flip: ink at the surface, toward paper as you descend */
+html[data-deeptime="on"] body{ color:color-mix(in srgb, var(--ink) calc((1 - var(--sc,0)) * 100%), var(--paper)); }
+a{ color:inherit; }
+
+/* ---------- background layers ---------- */
+.bgvideo{ position:fixed; inset:0; width:100%; height:100%; object-fit:cover; z-index:-3; pointer-events:none; filter:grayscale(.4) saturate(.7) brightness(.9) contrast(.98); }
+/* #2 torch: solid surface with a soft hole that follows the pointer, revealing the video */
+.torch{ position:fixed; inset:0; z-index:-2; pointer-events:none; background:var(--paper);
+  -webkit-mask:radial-gradient(circle var(--r) at var(--mx,50%) var(--my,40%), transparent 0, transparent 60%, #000 100%);
+          mask:radial-gradient(circle var(--r) at var(--mx,50%) var(--my,40%), transparent 0, transparent 60%, #000 100%); }
+html[data-torch="off"] .torch{ -webkit-mask:none; mask:none; }   /* off = plain solid surface (video hidden) */
+/* #4 deep-time: aging tint that deepens as you scroll down */
+.deeptime{ position:fixed; inset:0; z-index:-1; pointer-events:none; background:linear-gradient(180deg,#122018,#2a1c10); opacity:calc(var(--sc,0)*.8); }
+html[data-deeptime="off"] .deeptime{ display:none; }
+/* #3 springtails canvas */
+.springs{ position:fixed; inset:0; z-index:50; pointer-events:none; }
+html[data-springtails="off"] .springs{ display:none; }
+
+/* ---------- controls ---------- */
+.controls{ position:sticky; top:0; z-index:80; background:var(--paper); border-bottom:1px solid var(--line);
+  padding:10px clamp(12px,3vw,24px); display:flex; flex-wrap:wrap; gap:14px 22px; align-items:flex-end; font-family:var(--mono); }
+.cgroup{ display:flex; flex-direction:column; gap:5px; }
+.clabel{ font-size:9px; letter-spacing:.16em; text-transform:uppercase; opacity:.6; }
+.seg{ display:flex; gap:2px; flex-wrap:wrap; }
+.seg button{ font:inherit; font-size:11.5px; border:1px solid var(--line); background:transparent; color:var(--ink); padding:5px 9px; cursor:pointer; }
+.seg button:hover{ border-color:var(--ink); }
+.seg button[aria-pressed="true"]{ background:var(--ink); color:var(--paper); border-color:var(--ink); }
+.readout{ margin-left:auto; font-size:10.5px; opacity:.7; text-align:right; max-width:42ch; line-height:1.5; }
+
+/* ---------- stage ---------- */
+.stagewrap{ position:relative; z-index:1; display:flex; justify-content:center; padding:0 clamp(12px,3vw,28px) 30vh; }
+.stage{ width:100%; max-width:900px; }
+html[data-view="phone"] .stage{ max-width:380px; }
+
+.nav{ display:flex; align-items:baseline; gap:18px; padding:22px 0 14px; border-bottom:1px solid var(--line); }
+.brand{ font-family:var(--head); font-weight:700; letter-spacing:-.02em; font-size:18px; }
+.menu{ display:flex; gap:16px; margin-left:6px; font-family:var(--mono); font-size:12px; }
+.menu a{ text-decoration:none; opacity:.78; } .menu a:hover{ opacity:1; }
+
+.hero{ min-height:78vh; display:flex; flex-direction:column; justify-content:center; }
+.hero h1{ font-family:var(--head); font-weight:700; font-size:clamp(34px,7vw,76px); line-height:1.0; letter-spacing:-.02em; margin:0 0 16px; }
+html[data-dissolve="on"] .hero h1{ filter:url(#dissolve); }
+.hero .role{ font-family:var(--mono); font-size:12px; opacity:.75; max-width:46ch; }
+.hint{ font-family:var(--mono); font-size:10px; letter-spacing:.2em; text-transform:uppercase; opacity:.55; margin-top:28px; }
+
+.kick{ font-family:var(--mono); font-size:10px; letter-spacing:.2em; text-transform:uppercase; opacity:.6; margin:0 0 14px; }
+.row{ display:grid; grid-template-columns:46px 1fr auto; gap:14px; align-items:baseline; padding:16px 0; border-top:1px solid var(--line); }
+.row .no{ font-family:var(--mono); font-size:12px; opacity:.6; }
+.row .ttl{ font-family:var(--head); font-weight:700; font-size:clamp(18px,2.6vw,26px); letter-spacing:-.01em; }
+.row .sub{ font-family:var(--mono); font-size:11px; opacity:.7; margin-top:3px; }
+.row .yr{ font-family:var(--mono); font-size:12px; opacity:.7; }
+
+.strata{ display:flex; flex-direction:column; gap:2px; margin-top:40px; }
+.band{ position:relative; padding:26px 18px; overflow:hidden; }
+.band::before{ content:""; position:absolute; inset:0; background:url(assets/flowstone.jpg) center/cover; filter:grayscale(.3) brightness(.5) contrast(1.1); opacity:.5; }
+.band .yrn{ position:relative; font-family:var(--head); font-weight:700; font-size:26px; }
+.band .d{ position:relative; font-family:var(--mono); font-size:11px; opacity:.85; margin-top:4px; }
+
+.sec{ padding-top:8vh; }
+.foot{ margin-top:14vh; padding-top:16px; border-top:1px solid var(--line); font-family:var(--mono); font-size:11px; opacity:.8; }
+
+@media (prefers-reduced-motion: reduce){ .hero h1{ filter:none; } }
+</style>
+</head>
+<body>
+
+<video class="bgvideo" autoplay muted loop playsinline webkit-playsinline preload="auto" poster="assets/flowstone.jpg"><source src="assets/video/bg-loop.mp4" type="video/mp4"></video>
+<div class="torch"></div>
+<div class="deeptime"></div>
+<canvas class="springs"></canvas>
+
+<!-- #6 dissolve / leaking-letters filter (headline only, slow) -->
+<svg width="0" height="0" aria-hidden="true"><defs>
+  <filter id="dissolve">
+    <feTurbulence type="fractalNoise" baseFrequency="0.012 0.016" numOctaves="2" seed="4" result="n">
+      <animate attributeName="baseFrequency" dur="36s" values="0.012 0.016;0.02 0.011;0.012 0.016" repeatCount="indefinite"/>
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="n" xChannelSelector="R" yChannelSelector="G" scale="4">
+      <animate attributeName="scale" dur="30s" values="2;15;2" repeatCount="indefinite"/>
+    </feDisplacementMap>
+  </filter>
+</defs></svg>
+
+<div class="controls">
+  <div class="cgroup"><span class="clabel">Torch reveal</span><div class="seg" data-set="torch"><button data-v="on" aria-pressed="true">On</button><button data-v="off">Off</button></div></div>
+  <div class="cgroup"><span class="clabel">Springtails</span><div class="seg" data-set="springtails"><button data-v="on" aria-pressed="true">On</button><button data-v="off">Off</button></div></div>
+  <div class="cgroup"><span class="clabel">Deep time</span><div class="seg" data-set="deeptime"><button data-v="on" aria-pressed="true">On</button><button data-v="off">Off</button></div></div>
+  <div class="cgroup"><span class="clabel">Dissolve type</span><div class="seg" data-set="dissolve"><button data-v="on" aria-pressed="true">On</button><button data-v="off">Off</button></div></div>
+  <div class="cgroup"><span class="clabel">Paper / ink</span><div class="seg" data-set="invert"><button data-v="off">Paper</button><button data-v="on" aria-pressed="true">Ink</button></div></div>
+  <div class="cgroup"><span class="clabel">Width</span><div class="seg" data-set="view"><button data-v="desktop" aria-pressed="true">Desktop</button><button data-v="phone">Phone</button></div></div>
+  <div class="readout">move the cursor: torch reveals the footage · scroll down to descend through deep time · springtails flee your pointer · the title slowly dissolves</div>
+</div>
+
+<div class="stagewrap"><div class="stage">
+
+  <nav class="nav">
+    <span class="brand">Anna Jurkiewicz</span>
+    <span class="menu"><a href="#">index</a><a href="#">timeline</a><a href="#">contact</a></span>
+  </nav>
+
+  <header class="hero">
+    <h1>Anna Jurkiewicz</h1>
+    <p class="role">interdisciplinary artist: voice, video, writing, performance, sound. karst, deep time, the more-than-human.</p>
+    <p class="hint">move &amp; scroll &darr;</p>
+  </header>
+
+  <section class="sec">
+    <p class="kick">Index of works</p>
+    <div class="row"><span class="no">01</span><div><div class="ttl">The Door</div><div class="sub">solo voice performance in caves</div></div><span class="yr">2024</span></div>
+    <div class="row"><span class="no">02</span><div><div class="ttl">Tallatom</div><div class="sub">with Farhang, Goździk, Ursprung</div></div><span class="yr">2025</span></div>
+    <div class="row"><span class="no">03</span><div><div class="ttl">Silent Partners</div><div class="sub">springtails: video, scores, smells, poetry</div></div><span class="yr">2019—</span></div>
+    <div class="row"><span class="no">04</span><div><div class="ttl">Voicing Places</div><div class="sub">soundwalks &amp; lecture-performances</div></div><span class="yr">ongoing</span></div>
+  </section>
+
+  <section class="sec">
+    <p class="kick">Descending — sediment of years</p>
+    <div class="strata">
+      <div class="band"><span class="yrn">2026</span><span class="d">Voicing Places · ZYEM · Tallatom</span></div>
+      <div class="band"><span class="yrn">2025</span><span class="d">steirischer herbst · CTM Berlin · residency in Sweden</span></div>
+      <div class="band"><span class="yrn">2024</span><span class="d">The Door (caves) · The Color of B Flat · Red Thread</span></div>
+      <div class="band"><span class="yrn">2019</span><span class="d">first descent into karst — bedrock</span></div>
+    </div>
+  </section>
+
+  <footer class="foot">she/her · Vienna / Warsaw · the deeper you scroll, the older the rock</footer>
+
+</div></div>
+
+<script>
+const root = document.documentElement;
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* shared pointer + scroll state */
+let px = innerWidth/2, py = innerHeight*0.4, sc = 0, pend = false;
+function applyPointer(){ root.style.setProperty('--mx', px+'px'); root.style.setProperty('--my', py+'px'); pend = false; }
+function onMove(x,y){ px=x; py=y; if(!pend){ requestAnimationFrame(applyPointer); pend=true; } }
+addEventListener('mousemove', e=> onMove(e.clientX, e.clientY), {passive:true});
+addEventListener('touchmove', e=>{ if(e.touches[0]) onMove(e.touches[0].clientX, e.touches[0].clientY); }, {passive:true});
+applyPointer();
+
+let stick=false;
+function onScroll(){ const m=(document.documentElement.scrollHeight-innerHeight)||1; sc=Math.min(1,Math.max(0,scrollY/m)); root.style.setProperty('--sc', sc.toFixed(4)); stick=false; }
+addEventListener('scroll', ()=>{ if(!stick){ requestAnimationFrame(onScroll); stick=true; } }, {passive:true});
+onScroll();
+
+/* theme colours for the springtails (so they stay visible as the page ages) */
+let inkRGB=[22,20,14], paperRGB=[234,230,219];
+function hex(h){ h=h.trim().replace('#',''); if(h.length===3) h=h.split('').map(c=>c+c).join(''); return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]; }
+function readColours(){ const s=getComputedStyle(root); try{ inkRGB=hex(s.getPropertyValue('--ink')); paperRGB=hex(s.getPropertyValue('--paper')); }catch(e){} }
+readColours();
+
+/* #3 springtails */
+const cv=document.querySelector('.springs'), ctx=cv.getContext('2d');
+let W,H, dpr=Math.min(2, devicePixelRatio||1);
+function resize(){ W=cv.width=innerWidth*dpr; H=cv.height=innerHeight*dpr; cv.style.width=innerWidth+'px'; cv.style.height=innerHeight+'px'; }
+resize(); addEventListener('resize', ()=>{ resize(); }, {passive:true});
+const N=90, pts=[];
+for(let i=0;i<N;i++) pts.push({x:Math.random()*W, y:Math.random()*H, vx:0, vy:0});
+function springColour(){ const t=root.getAttribute('data-deeptime')==='on'? sc : 0;
+  return 'rgb('+Math.round(inkRGB[0]+(paperRGB[0]-inkRGB[0])*t)+','+Math.round(inkRGB[1]+(paperRGB[1]-inkRGB[1])*t)+','+Math.round(inkRGB[2]+(paperRGB[2]-inkRGB[2])*t)+')'; }
+function loop(){
+  requestAnimationFrame(loop);
+  if(root.getAttribute('data-springtails')!=='on'){ ctx.clearRect(0,0,W,H); return; }
+  ctx.clearRect(0,0,W,H); ctx.fillStyle=springColour(); ctx.globalAlpha=.7;
+  const R=130*dpr, mx=px*dpr, my=py*dpr;
+  for(let i=0;i<N;i++){ const p=pts[i];
+    const dx=p.x-mx, dy=p.y-my, d2=dx*dx+dy*dy;
+    if(d2 < R*R){ const d=Math.sqrt(d2)||1, f=(R-d)/R; p.vx+=(dx/d)*f*7; p.vy+=(dy/d)*f*7; }  /* spring away (jump) */
+    p.vx*=.85; p.vy*=.85;
+    p.x+=p.vx+(Math.random()-.5)*.4; p.y+=p.vy+(Math.random()-.5)*.4;                          /* tiny drift */
+    if(p.x<0)p.x+=W; else if(p.x>W)p.x-=W; if(p.y<0)p.y+=H; else if(p.y>H)p.y-=H;
+    ctx.beginPath(); ctx.arc(p.x, p.y, 1.7*dpr, 0, 7); ctx.fill();
+  }
+}
+if(!reduce){ requestAnimationFrame(loop); }
+else { ctx.fillStyle=springColour(); ctx.globalAlpha=.6; for(let i=0;i<N;i++){ ctx.beginPath(); ctx.arc(pts[i].x,pts[i].y,1.7*dpr,0,7); ctx.fill(); } }
+
+/* controls */
+document.querySelectorAll('.seg').forEach(seg=>{
+  const key=seg.dataset.set;
+  seg.addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b) return;
+    root.setAttribute('data-'+key, b.dataset.v);
+    seg.querySelectorAll('button').forEach(x=> x.setAttribute('aria-pressed', String(x===b)));
+    if(key==='invert') readColours();
+  });
+});
+
+/* background video: play, with first-gesture fallback (iOS Low Power Mode) */
+(function(){ const v=document.querySelector('.bgvideo'); if(!v) return;
+  if(reduce){ v.pause(); v.removeAttribute('autoplay'); return; }
+  v.muted=true; const tp=()=>{ const p=v.play(); if(p&&p.catch)p.catch(()=>{}); }; tp();
+  const evs=['touchstart','pointerdown','click','scroll','keydown'];
+  const once=()=>{ tp(); evs.forEach(e=>removeEventListener(e,once)); };
+  evs.forEach(e=> addEventListener(e, once, {passive:true}));
+})();
+</script>
+</body>
+</html>
