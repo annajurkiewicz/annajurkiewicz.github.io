@@ -183,6 +183,9 @@ html[data-approach="brutalist"] .row .ttl{ text-transform:uppercase; }
   <div class="cgroup"><span class="clabel">Width</span><div class="seg" data-set="view">
     <button data-v="desktop" aria-pressed="true">Desktop</button><button data-v="phone">Phone</button>
   </div></div>
+  <div class="cgroup"><span class="clabel">Background loop</span><div class="seg" data-set="bg">
+    <button data-v="on" aria-pressed="true">On</button><button data-v="off">Off</button>
+  </div></div>
   <div class="readout" id="readout"></div>
 </div>
 
@@ -256,6 +259,9 @@ function sync(){
   document.getElementById('ftag').textContent = 'approach: ' + label[a];
 }
 sync();
+// background video: play when on, pause when off / reduced-motion
+function bgvid(){var v=document.querySelector('.bgvideo');if(!v)return;if(root.getAttribute('data-bg')==='off'||matchMedia('(prefers-reduced-motion: reduce)').matches){v.pause();}else{v.play().catch(function(){});}}
+document.querySelector('.controls').addEventListener('click', bgvid); bgvid();
 // minimal landing: reveal on first scroll / mouse move / key / touch
 (function(){function wake(){document.documentElement.classList.add('awake');['scroll','mousemove','touchstart','keydown','wheel'].forEach(function(e){removeEventListener(e,wake);});}['scroll','mousemove','touchstart','keydown','wheel'].forEach(function(e){addEventListener(e,wake,{passive:true});});setTimeout(wake,1000);})();
 </script>

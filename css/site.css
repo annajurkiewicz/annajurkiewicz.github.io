@@ -143,3 +143,8 @@ html:not(.awake) body.home .nav,
 html:not(.awake) body.home .footer,
 html:not(.awake) body.home main>*:not(.hero),
 html:not(.awake) body.home .hero .puddles{ opacity:0; pointer-events:none; }
+
+/* ---------- lofi background video loop (home; fixed, content scrolls over) ---------- */
+.bgvideo{ position:fixed; inset:0; width:100%; height:100%; object-fit:cover; z-index:-3; pointer-events:none; filter:grayscale(.25) saturate(.85) brightness(.82) contrast(1.02); }
+.bgscrim{ position:fixed; inset:0; z-index:-2; pointer-events:none; background:color-mix(in srgb, var(--bg) 60%, transparent); }
+@media (prefers-reduced-motion: reduce){ .bgvideo{ display:none; } }

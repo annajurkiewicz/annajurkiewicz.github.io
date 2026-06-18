@@ -61,3 +61,10 @@
   setTimeout(wake, 1000); // and auto-reveal after ~1s
 })();
 
+/* background video: pause if the visitor prefers reduced motion */
+(function () {
+  var v = document.querySelector('.bgvideo');
+  if (v && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { v.pause(); v.removeAttribute('autoplay'); }
+})();
+
+

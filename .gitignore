@@ -6,6 +6,9 @@ internal-docs/
 *.pages
 *.key
 
+# Source video kept locally; the deployed loop is assets/video/bg-loop.mp4
+assets/video/ryki_wersja_robocza_v1 (240p).mp4
+
 # Dependencies / build output (Astro, once scaffolded)
 node_modules/
 dist/
