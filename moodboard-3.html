@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-approach="cave" data-invert="off" data-grain="on" data-view="desktop" data-bg="on">
+<html lang="en" data-approach="cave" data-invert="off" data-grain="on" data-view="desktop" data-bg="on" data-cut="baked">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -64,8 +64,12 @@ html[data-invert="on"][data-grain="on"] .grain{ mix-blend-mode:screen; opacity:.
 html[data-bg="off"] .bgvideo, html[data-bg="off"] .bgscrim{ display:none; }
 html[data-bg="on"] .contour{ display:none; }
 /* cave mask: solid field with survey-pattern holes; the looping video shows through */
-.cavemask{ position:fixed; inset:0; z-index:-1; background:var(--paper); filter:url(#cutout); pointer-events:none; display:none; }
+.cavemask{ position:fixed; inset:0; z-index:-1; background:var(--paper); pointer-events:none; display:none; }
 html[data-approach="cavemask"] .cavemask{ display:block; }
+/* baked PNG alpha-mask (default): static bitmap, zero per-frame filter cost */
+html[data-cut="baked"] .cavemask{ -webkit-mask:url(assets/holes.png) center / cover no-repeat; mask:url(assets/holes.png) center / cover no-repeat; mask-mode:alpha; }
+/* live SVG filter, kept for comparison */
+html[data-cut="svg"] .cavemask{ filter:url(#cutout); }
 /* keep the left solid; open the cracks toward the right where there is less text */
 .cavefill{ position:fixed; inset:0; z-index:0; pointer-events:none; display:none; background:linear-gradient(100deg, var(--paper) 0%, var(--paper) 50%, transparent 88%); }
 html[data-approach="cavemask"] .cavefill{ display:block; }
@@ -216,6 +220,9 @@ html[data-approach="brutalist"] .row .ttl{ text-transform:uppercase; }
   </div></div>
   <div class="cgroup"><span class="clabel">Background loop</span><div class="seg" data-set="bg">
     <button data-v="on" aria-pressed="true">On</button><button data-v="off">Off</button>
+  </div></div>
+  <div class="cgroup"><span class="clabel">Cutout</span><div class="seg" data-set="cut">
+    <button data-v="baked" aria-pressed="true">Baked</button><button data-v="svg">SVG</button>
   </div></div>
   <div class="readout" id="readout"></div>
 </div>
