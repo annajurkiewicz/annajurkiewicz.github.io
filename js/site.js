@@ -58,5 +58,6 @@
     ['scroll', 'mousemove', 'touchstart', 'keydown', 'wheel'].forEach(function (e) { window.removeEventListener(e, wake); });
   }
   ['scroll', 'mousemove', 'touchstart', 'keydown', 'wheel'].forEach(function (e) { window.addEventListener(e, wake, { passive: true }); });
+  setTimeout(wake, 1000); // and auto-reveal after ~1s
 })();
 

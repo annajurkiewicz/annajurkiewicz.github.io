@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-approach="cave" data-invert="off" data-grain="on" data-view="desktop">
+<html lang="en" data-approach="cave" data-invert="off" data-grain="on" data-view="desktop" data-bg="on">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -58,6 +58,12 @@ html[data-invert="on"][data-grain="on"] .grain{ mix-blend-mode:screen; opacity:.
 .seg button:hover{ border-color:var(--ink); }
 .seg button[aria-pressed="true"]{ background:var(--ink); color:var(--paper); border-color:var(--ink); }
 .readout{ margin-left:auto; font-size:11px; opacity:.7; text-align:right; max-width:38ch; }
+/* lofi background video loop */
+.bgvideo{ position:fixed; inset:0; width:100%; height:100%; object-fit:cover; z-index:-3; pointer-events:none; filter:grayscale(.3) saturate(.7) brightness(.82) contrast(1.02); }
+.bgscrim{ position:fixed; inset:0; z-index:-2; pointer-events:none; background:color-mix(in srgb, var(--paper) 58%, transparent); }
+html[data-bg="off"] .bgvideo, html[data-bg="off"] .bgscrim{ display:none; }
+html[data-bg="on"] .contour{ display:none; }
+@media (prefers-reduced-motion: reduce){ .bgvideo{ display:none; } }
 
 /* ---------- stage ---------- */
 .stagewrap{ position:relative; z-index:1; display:flex; justify-content:center; padding:0 clamp(10px,3vw,26px) 90px; }
@@ -140,6 +146,10 @@ html[data-approach="brutalist"] .row .ttl{ text-transform:uppercase; }
 </head>
 <body>
 
+<!-- lofi background video loop -->
+<video class="bgvideo" autoplay muted loop playsinline preload="auto" poster="assets/flowstone.jpg"><source src="assets/video/bg-loop.mp4" type="video/mp4"></video>
+<div class="bgscrim"></div>
+
 <!-- texture generators -->
 <svg class="contour" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
   <defs><filter id="iso" x="0" y="0" width="100%" height="100%">
@@ -188,7 +198,7 @@ html[data-approach="brutalist"] .row .ttl{ text-transform:uppercase; }
   <header class="hero">
     <h1>Anna<br>Jurkiewicz</h1>
     <p class="role">interdisciplinary artist: voice, video, writing, performance, sound. karst, deep time, the more-than-human.</p>
-    <p class="hint">scroll / move &darr;</p>
+    <p class="hint">&darr;</p>
   </header>
 
   <figure class="media" style="margin:0">
@@ -247,7 +257,7 @@ function sync(){
 }
 sync();
 // minimal landing: reveal on first scroll / mouse move / key / touch
-(function(){function wake(){document.documentElement.classList.add('awake');['scroll','mousemove','touchstart','keydown','wheel'].forEach(function(e){removeEventListener(e,wake);});}['scroll','mousemove','touchstart','keydown','wheel'].forEach(function(e){addEventListener(e,wake,{passive:true});});})();
+(function(){function wake(){document.documentElement.classList.add('awake');['scroll','mousemove','touchstart','keydown','wheel'].forEach(function(e){removeEventListener(e,wake);});}['scroll','mousemove','touchstart','keydown','wheel'].forEach(function(e){addEventListener(e,wake,{passive:true});});setTimeout(wake,1000);})();
 </script>
 </body>
 </html>
