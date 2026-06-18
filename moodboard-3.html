@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="en" data-approach="cave" data-invert="off" data-grain="on" data-view="desktop" data-bg="on" data-cut="baked">
+  <!DOCTYPE html>
+<html lang="en" data-approach="cave" data-invert="off" data-grain="on" data-view="desktop" data-bg="on" data-cut="baked" data-vid="cover">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -60,6 +60,8 @@ html[data-invert="on"][data-grain="on"] .grain{ mix-blend-mode:screen; opacity:.
 .readout{ margin-left:auto; font-size:11px; opacity:.7; text-align:right; max-width:38ch; }
 /* lofi background video loop */
 .bgvideo{ position:fixed; inset:0; width:100%; height:100%; object-fit:cover; z-index:-3; pointer-events:none; filter:grayscale(.3) saturate(.7) brightness(.82) contrast(1.02); }
+html[data-vid="cover"] .bgvideo{ object-fit:cover; }      /* fills screen, zoomed (the "stretched" look) */
+html[data-vid="contain"] .bgvideo{ object-fit:contain; }  /* whole frame, true proportions */
 .bgscrim{ position:fixed; inset:0; z-index:-2; pointer-events:none; background:color-mix(in srgb, var(--paper) 58%, transparent); }
 html[data-bg="off"] .bgvideo, html[data-bg="off"] .bgscrim{ display:none; }
 html[data-bg="on"] .contour{ display:none; }
@@ -176,7 +178,7 @@ html[data-approach="brutalist"] .row .ttl{ text-transform:uppercase; }
 <!-- cave-survey mask: solid surface with the survey pattern punched out; video shows through the holes -->
 <svg width="0" height="0" aria-hidden="true"><defs>
   <filter id="cutout">
-    <feTurbulence type="fractalNoise" baseFrequency="0.009 0.012" numOctaves="3" seed="11" stitchTiles="stitch" result="n"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.0035 0.0045" numOctaves="2" seed="11" stitchTiles="stitch" result="n"/>
     <feComponentTransfer in="n" result="band"><feFuncA type="discrete" tableValues="0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0"/></feComponentTransfer>
     <feComposite in="SourceGraphic" in2="band" operator="out"/>
   </filter>
@@ -223,6 +225,9 @@ html[data-approach="brutalist"] .row .ttl{ text-transform:uppercase; }
   </div></div>
   <div class="cgroup"><span class="clabel">Cutout</span><div class="seg" data-set="cut">
     <button data-v="baked" aria-pressed="true">Baked</button><button data-v="svg">SVG</button>
+  </div></div>
+  <div class="cgroup"><span class="clabel">Video</span><div class="seg" data-set="vid">
+    <button data-v="cover" aria-pressed="true">Stretched</button><button data-v="contain">Fit</button>
   </div></div>
   <div class="readout" id="readout"></div>
 </div>
