@@ -63,6 +63,24 @@ html[data-invert="on"][data-grain="on"] .grain{ mix-blend-mode:screen; opacity:.
 .bgscrim{ position:fixed; inset:0; z-index:-2; pointer-events:none; background:color-mix(in srgb, var(--paper) 58%, transparent); }
 html[data-bg="off"] .bgvideo, html[data-bg="off"] .bgscrim{ display:none; }
 html[data-bg="on"] .contour{ display:none; }
+/* cave mask: solid field with survey-pattern holes; the looping video shows through */
+.cavemask{ position:fixed; inset:0; z-index:-1; background:var(--paper); filter:url(#cutout); pointer-events:none; display:none; }
+html[data-approach="cavemask"] .cavemask{ display:block; }
+/* keep the left solid; open the cracks toward the right where there is less text */
+.cavefill{ position:fixed; inset:0; z-index:0; pointer-events:none; display:none; background:linear-gradient(100deg, var(--paper) 0%, var(--paper) 32%, transparent 74%); }
+html[data-approach="cavemask"] .cavefill{ display:block; }
+html[data-approach="cavemask"] .bgscrim{ display:none; }
+html[data-approach="cavemask"] .contour{ display:none; }
+/* readability: calmer video through the holes + a paper halo behind text */
+html[data-approach="cavemask"] .bgvideo{ filter:grayscale(.4) brightness(.9) contrast(.9) blur(2px); }
+html[data-approach="cavemask"] .nav,
+html[data-approach="cavemask"] .hero h1,
+html[data-approach="cavemask"] .hero .role,
+html[data-approach="cavemask"] .index,
+html[data-approach="cavemask"] .events,
+html[data-approach="cavemask"] .foot{
+  text-shadow:0 0 3px var(--paper),0 0 3px var(--paper),0 0 6px var(--paper),0 0 6px var(--paper),0 0 10px var(--paper),0 0 10px var(--paper),0 0 16px var(--paper),0 0 16px var(--paper);
+}
 @media (prefers-reduced-motion: reduce){ .bgvideo{ display:none; } }
 
 /* ---------- stage ---------- */
@@ -83,7 +101,7 @@ html[data-view="phone"] .stage{ max-width:380px; }
 .hero .role{ font-family:var(--mono); font-size:12px; letter-spacing:.02em; opacity:.7; max-width:46ch; }
 .hint{ font-family:var(--mono); font-size:10px; letter-spacing:.24em; text-transform:uppercase; opacity:.5; transition:opacity .6s ease; margin-top:30px; }
 html.awake .hint{ opacity:0; pointer-events:none; }
-.stage>*{ transition:opacity 1s ease; }
+.stage>*{ transition:opacity 3s ease; }
 html:not(.awake) .stage>*:not(.hero){ opacity:0; pointer-events:none; }
 
 /* featured media (treated per approach) */
@@ -150,6 +168,17 @@ html[data-approach="brutalist"] .row .ttl{ text-transform:uppercase; }
 <video class="bgvideo" autoplay muted loop playsinline preload="auto" poster="assets/flowstone.jpg"><source src="assets/video/bg-loop.mp4" type="video/mp4"></video>
 <div class="bgscrim"></div>
 
+<!-- cave-survey mask: solid surface with the survey pattern punched out; video shows through the holes -->
+<svg width="0" height="0" aria-hidden="true"><defs>
+  <filter id="cutout">
+    <feTurbulence type="fractalNoise" baseFrequency="0.009 0.012" numOctaves="3" seed="11" stitchTiles="stitch" result="n"/>
+    <feComponentTransfer in="n" result="band"><feFuncA type="discrete" tableValues="0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0"/></feComponentTransfer>
+    <feComposite in="SourceGraphic" in2="band" operator="out"/>
+  </filter>
+</defs></svg>
+<div class="cavemask"></div>
+<div class="cavefill"></div>
+
 <!-- texture generators -->
 <svg class="contour" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
   <defs><filter id="iso" x="0" y="0" width="100%" height="100%">
@@ -169,6 +198,7 @@ html[data-approach="brutalist"] .row .ttl{ text-transform:uppercase; }
 <div class="controls">
   <div class="cgroup"><span class="clabel">Approach</span><div class="seg" data-set="approach">
     <button data-v="cave" aria-pressed="true">Cave survey</button>
+    <button data-v="cavemask">Cave mask</button>
     <button data-v="riso">Risograph</button>
     <button data-v="dither">1-bit dither</button>
     <button data-v="specimen">Specimen</button>
@@ -236,12 +266,13 @@ html[data-approach="brutalist"] .row .ttl{ text-transform:uppercase; }
 const root = document.documentElement;
 const desc = {
   cave:'Cave survey — speleological line-drawing logic: dotted hairlines, coordinate numbering, contour-noise field, technical mono labels, grayscale plates.',
+  cavemask:'Cave mask: the survey pattern becomes colourless cut-out holes in a solid paper / ink field, and the looping video shows through the contours while content scrolls over the surface.',
   riso:'Risograph — single muted ink, halftone dot screen, deliberate misregistration on images and titles. Print-zine texture.',
   dither:'1-bit dither — pure paper/ink, ordered-dither image grit, pixelated rendering, monospace caps. Lo-fi screen aesthetic.',
   specimen:'Specimen archive — herbarium / ledger logic: ruled lines, numbered plates, italic latin-style subtitles, an archival stamp red.',
   brutalist:'Brutalist document — raw structure made visible: heavy rules, boxed index, uppercase monospace, almost no decoration.'
 };
-const label = { cave:'cave survey', riso:'risograph', dither:'1-bit dither', specimen:'specimen', brutalist:'brutalist' };
+const label = { cave:'cave survey', cavemask:'cave mask', riso:'risograph', dither:'1-bit dither', specimen:'specimen', brutalist:'brutalist' };
 
 document.querySelectorAll('.seg').forEach(seg=>{
   const key = seg.dataset.set;
