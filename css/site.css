@@ -131,3 +131,15 @@ a:hover{ text-decoration:underline; text-underline-offset:3px; }
 .footer a{ color:var(--muted); } .footer a:hover{ color:var(--accent); }
 
 .note{ background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:14px 18px; font-size:14px; color:var(--muted); }
+
+/* ---------- MINIMAL LANDING (home only): name + subtle subtitle; reveal on scroll/mouse ---------- */
+body.home .hero{ min-height:calc(100vh - 62px); display:flex; flex-direction:column; justify-content:center; padding-top:0; padding-bottom:0; }
+body.home .hero h1{ font-size:clamp(34px,6vw,64px); }
+body.home .hero .tagline{ font-size:clamp(14px,1.8vw,17px); }
+.hint{ font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--muted); opacity:.6; transition:opacity .6s ease; margin-top:26px; }
+html.awake .hint{ opacity:0; pointer-events:none; }
+body.home .nav, body.home .footer, body.home main>*, body.home .hero .puddles{ transition:opacity 1s ease; }
+html:not(.awake) body.home .nav,
+html:not(.awake) body.home .footer,
+html:not(.awake) body.home main>*:not(.hero),
+html:not(.awake) body.home .hero .puddles{ opacity:0; pointer-events:none; }

@@ -107,11 +107,15 @@ html[data-view="phone"] .stage{ max-width:392px; }
 .burger span{ width:21px; height:2px; background:var(--text); display:block; }
 html[data-view="phone"] .menu{ display:none; } html[data-view="phone"] .burger{ display:flex; }
 
-/* hero */
-.hero{ padding:clamp(40px,9vw,110px) 4px clamp(28px,5vw,56px); }
-.hero h1{ font-size:clamp(50px,10vw,118px); margin:0 0 14px; }
+/* hero — minimal landing */
+.hero{ min-height:calc(100vh - 150px); display:flex; flex-direction:column; justify-content:center; padding:0 4px; }
+.hero h1{ font-size:clamp(30px,5vw,56px); margin:0 0 12px; }
 html[data-liquid="on"] .hero h1{ filter:url(#waterFlow); }
-.tagline{ font-size:clamp(15px,2vw,19px); color:var(--muted); max-width:34ch; margin:0; }
+.tagline{ font-size:clamp(14px,1.8vw,16px); color:var(--muted); max-width:34ch; margin:0; }
+.hint{ font-size:10.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--muted); opacity:.6; transition:opacity .6s ease; margin-top:28px; }
+html.awake .hint{ opacity:0; pointer-events:none; }
+.stage>*{ transition:opacity 1s ease; }
+html:not(.awake) .stage>*:not(.hero){ opacity:0; pointer-events:none; }
 
 /* puddle photos with ripple-on-hover */
 .puddles{ display:flex; gap:16px; flex-wrap:wrap; padding:6px 4px 30px; }
@@ -235,6 +239,7 @@ html[data-view="phone"] .ev{ flex-wrap:wrap; } html[data-view="phone"] .ev .d{ f
   <header class="hero">
     <h1 class="display">Anna Jurkiewicz</h1>
     <p class="tagline">Interdisciplinary artist. Voice, video, writing, performance and sound.</p>
+    <p class="hint">scroll / move &darr;</p>
   </header>
 
   <div class="puddles">
@@ -342,6 +347,8 @@ window.addEventListener('scroll', ()=>{ if(!ticking){ requestAnimationFrame(()=>
 document.querySelectorAll('.tag').forEach(c=> c.addEventListener('click', ()=> c.classList.toggle('on')));
 document.querySelector('.burger').addEventListener('click', ()=> alert('On phones the menu opens here as a full-screen overlay.'));
 onScroll(); sync();
+// minimal landing: reveal on first scroll / mouse move / key / touch
+(function(){function wake(){document.documentElement.classList.add('awake');['scroll','mousemove','touchstart','keydown','wheel'].forEach(function(e){removeEventListener(e,wake);});}['scroll','mousemove','touchstart','keydown','wheel'].forEach(function(e){addEventListener(e,wake,{passive:true});});})();
 </script>
 </body>
 </html>

@@ -50,3 +50,13 @@
   var y = document.getElementById('year');
   if (y) y.textContent = new Date().getFullYear();
 })();
+
+/* minimal landing: reveal faded content on first scroll / mouse move / key / touch */
+(function () {
+  function wake() {
+    document.documentElement.classList.add('awake');
+    ['scroll', 'mousemove', 'touchstart', 'keydown', 'wheel'].forEach(function (e) { window.removeEventListener(e, wake); });
+  }
+  ['scroll', 'mousemove', 'touchstart', 'keydown', 'wheel'].forEach(function (e) { window.addEventListener(e, wake, { passive: true }); });
+})();
+
