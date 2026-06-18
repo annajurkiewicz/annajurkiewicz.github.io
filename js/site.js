@@ -61,10 +61,17 @@
   setTimeout(wake, 1000); // and auto-reveal after ~1s
 })();
 
-/* background video: pause if the visitor prefers reduced motion */
+/* background video: play it (incl. iOS), unless reduced-motion. If autoplay is blocked
+   (e.g. iOS Low Power Mode), start it on the first user gesture. Poster shows meanwhile. */
 (function () {
-  var v = document.querySelector('.bgvideo');
-  if (v && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { v.pause(); v.removeAttribute('autoplay'); }
+  var v = document.querySelector('.bgvideo'); if (!v) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { v.pause(); v.removeAttribute('autoplay'); return; }
+  v.muted = true; v.setAttribute('muted', '');
+  function tryplay() { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+  tryplay();
+  var evts = ['touchstart', 'pointerdown', 'click', 'scroll', 'keydown'];
+  function once() { tryplay(); evts.forEach(function (e) { window.removeEventListener(e, once); }); }
+  evts.forEach(function (e) { window.addEventListener(e, once, { passive: true }); });
 })();
 
 

@@ -172,7 +172,7 @@ html[data-approach="brutalist"] .row .ttl{ text-transform:uppercase; }
 <body>
 
 <!-- lofi background video loop -->
-<video class="bgvideo" autoplay muted loop playsinline preload="auto" poster="assets/flowstone.jpg"><source src="assets/video/bg-loop.mp4" type="video/mp4"></video>
+<video class="bgvideo" autoplay muted loop playsinline webkit-playsinline preload="auto" poster="assets/flowstone.jpg"><source src="assets/video/bg-loop.mp4" type="video/mp4"></video>
 <div class="bgscrim"></div>
 
 <!-- cave-survey mask: solid surface with the survey pattern punched out; video shows through the holes -->
@@ -306,6 +306,7 @@ sync();
 // background video: play when on, pause when off / reduced-motion
 function bgvid(){var v=document.querySelector('.bgvideo');if(!v)return;if(root.getAttribute('data-bg')==='off'||matchMedia('(prefers-reduced-motion: reduce)').matches){v.pause();}else{v.play().catch(function(){});}}
 document.querySelector('.controls').addEventListener('click', bgvid); bgvid();
+document.addEventListener('touchstart', bgvid, {passive:true, once:true}); document.addEventListener('click', bgvid, {once:true});
 // minimal landing: reveal on first scroll / mouse move / key / touch
 (function(){function wake(){document.documentElement.classList.add('awake');['scroll','mousemove','touchstart','keydown','wheel'].forEach(function(e){removeEventListener(e,wake);});}['scroll','mousemove','touchstart','keydown','wheel'].forEach(function(e){addEventListener(e,wake,{passive:true});});setTimeout(wake,1000);})();
 </script>
