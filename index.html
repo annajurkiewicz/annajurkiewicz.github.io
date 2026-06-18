@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anna Jurkiewicz — design review</title>
+<meta name="robots" content="noindex">
+<script>(function(){try{var t=localStorage.getItem('theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+
+<header class="nav"><div class="wrap">
+  <a class="brand" href="index.html">Anna Jurkiewicz</a>
+  <span class="navright">
+    <span class="lang">design review</span>
+    <button class="iconbtn" id="theme" aria-label="toggle theme">☽</button>
+  </span>
+</div></header>
+
+<main class="wrap">
+  <section class="hero">
+    <h1 class="display">Pick a direction.</h1>
+    <p class="tagline">Three things to look at: two mood boards for choosing colours and type, and a first full draft of the site built from everything we have agreed so far.</p>
+  </section>
+
+  <section class="section" style="padding-top:8px;">
+    <div class="hub">
+      <a class="hubcard" href="moodboard.html">
+        <div class="thumb" style="background-image:url(assets/tallatom.jpg)"></div>
+        <div class="body"><span class="tag-pill">Mood board 1</span><h3>Characterful palettes</h3><p>Three flat palettes (Karst, Flowstone, Springtail) and three expressive font pairings. Light / dark, phone preview.</p></div>
+      </a>
+      <a class="hubcard" href="moodboard-2.html">
+        <div class="thumb" style="background-image:url(assets/springtail.jpg)"></div>
+        <div class="body"><span class="tag-pill">Mood board 2</span><h3>Compact + complex</h3><p>Compact type, minimal tags, flat layout, plus gradient / iridescent palettes that shift on scroll, and parallax vs static sketches.</p></div>
+      </a>
+      <a class="hubcard" href="draft/index.html">
+        <div class="thumb" style="background-image:url(assets/flowstone.jpg)"></div>
+        <div class="body"><span class="tag-pill">Full draft</span><h3>The site, working</h3><p>Landing, the menu pages, Works filter, Timeline and project pages. Built static so it deploys by upload.</p></div>
+      </a>
+    </div>
+  </section>
+
+  <section class="section">
+    <p class="note">This page is a private review hub (set to <code>noindex</code>). The full draft currently uses the <b>Karst</b> palette and the <b>Space Grotesk + Inter Tight</b> pairing as a default; once you choose from the mood boards, that becomes the locked theme.</p>
+  </section>
+</main>
+
+<footer class="footer"><div class="wrap">
+  <span>Anna Jurkiewicz · she/her · Vienna / Warsaw</span>
+  <span>&copy; <span id="year"></span></span>
+</div></footer>
+
+<script src="js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en" data-palette="iridescent" data-mode="dark" data-type="grotesk" data-view="desktop"
+      data-liquid="off" data-backdrop="karst" data-scroll="static" data-cshift="on">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anna Jurkiewicz — directions, draft 2</title>
+
+<!-- Compact type. Loaded from Google for preview only; production self-hosts. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&family=Big+Shoulders+Display:wght@700;800&family=Familjen+Grotesk:wght@600;700&family=Hanken+Grotesk:wght@400;700&family=Inter+Tight:wght@400;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   COMPACT TYPE PAIRINGS
+   ============================================================ */
+html[data-type="grotesk"]   { --font-display:"Space Grotesk", system-ui, sans-serif;        --font-body:"Inter Tight", system-ui, sans-serif;  --dw:600; --dtrack:-0.02em; --dlh:1.0;  --bls:1.45; }
+html[data-type="condensed"] { --font-display:"Big Shoulders Display", system-ui, sans-serif; --font-body:"Archivo", system-ui, sans-serif;      --dw:700; --dtrack:0;       --dlh:0.9;  --bls:1.5; }
+html[data-type="character"] { --font-display:"Familjen Grotesk", system-ui, sans-serif;      --font-body:"Hanken Grotesk", system-ui, sans-serif;--dw:600; --dtrack:-0.01em; --dlh:1.0;  --bls:1.5; }
+
+/* ============================================================
+   PALETTES
+   flat: karst / flowstone / springtail / shades  (light + dark)
+   complex: iridescent / nacre / deepwater        (gradient bg-layer)
+   ============================================================ */
+html[data-palette="karst"][data-mode="light"]      { --bg:#F4F0E8; --surface:#FBF8F2; --line:#E4DCCE; --text:#1A1611; --muted:#6E6457; --accent:#B11468; --accent2:#A9783A; }
+html[data-palette="karst"][data-mode="dark"]       { --bg:#15110C; --surface:#211B13; --line:#362D20; --text:#EDE5D7; --muted:#9C8F7C; --accent:#EE73AC; --accent2:#CFA160; }
+html[data-palette="flowstone"][data-mode="light"]  { --bg:#ECF0EF; --surface:#F7FAF9; --line:#D6DEDC; --text:#121819; --muted:#5C6A6A; --accent:#0F7A6D; --accent2:#B11468; }
+html[data-palette="flowstone"][data-mode="dark"]   { --bg:#0B1312; --surface:#14201E; --line:#25332F; --text:#DFE8E5; --muted:#879895; --accent:#54C6B2; --accent2:#ED6AA6; }
+html[data-palette="springtail"][data-mode="light"] { --bg:#ECEEE6; --surface:#F6F7F0; --line:#DADCCF; --text:#16180F; --muted:#66695A; --accent:#BC1668; --accent2:#5F7A4C; }
+html[data-palette="springtail"][data-mode="dark"]  { --bg:#111308; --surface:#1C1E12; --line:#2F3220; --text:#E8E9DB; --muted:#91947E; --accent:#ED5FA0; --accent2:#95B27C; }
+html[data-palette="shades"][data-mode="light"]     { --bg:#E8ECEA; --surface:#F2F5F4; --line:#D2DAD8; --text:#15201E; --muted:#5E6E6B; --accent:#2E5A54; --accent2:#7A938E; }
+html[data-palette="shades"][data-mode="dark"]      { --bg:#101615; --surface:#1A2220; --line:#2B3431; --text:#DBE5E2; --muted:#8A9A96; --accent:#84C7BC; --accent2:#4E6A65; }
+
+/* complex / gradient palettes (bg comes from .bg-layer) */
+html[data-palette="iridescent"] { --bg:#0c0f14; --bar:#0E1117; --surface:rgba(14,18,26,.55); --line:rgba(255,255,255,.16); --text:#F6F7FB; --muted:rgba(240,243,250,.74); --accent:#FFD97A; --accent2:#FF86D6; }
+html[data-palette="nacre"]      { --bg:#EEF0F6; --bar:#F2F0F8; --surface:rgba(255,255,255,.6);  --line:rgba(40,30,60,.14);  --text:#2A2640; --muted:#6F6A86;            --accent:#B6457F; --accent2:#3F9F99; }
+html[data-palette="deepwater"]  { --bg:#10243A; --bar:#0C1B2A; --surface:rgba(8,18,30,.5);    --line:rgba(255,255,255,.14); --text:#EAF1F4; --muted:#A9BCC4;            --accent:#76E0CF; --accent2:#FF8AD6; }
+
+/* background layer. Gradient lives on .bg-grad and moves via a cheap GPU transform
+   (no per-frame repaint, no always-on animation, no scroll hue-rotate). */
+.bg-layer{ position:fixed; inset:0; z-index:0; overflow:hidden; --f-bright:1; filter:brightness(var(--f-bright)); }
+html[data-mode="dark"] .bg-layer{ --f-bright:.82; }
+.bg-grad{ position:absolute; top:0; left:-60%; width:220%; height:100%; transform:translate3d(var(--shift,0),0,0); will-change:transform; }
+html[data-palette="iridescent"] .bg-grad{ background:linear-gradient(125deg,#0f8f8f,#6f2bd6,#e0339a,#f4b53d,#14b3a0,#6f2bd6); opacity:.92; }
+html[data-palette="nacre"] .bg-grad     { background:linear-gradient(125deg,#f4eefb,#e6f4f1,#fcedf3,#eef0fb,#f1eafb,#e6f4f1); }
+html[data-palette="deepwater"] .bg-grad { background:linear-gradient(150deg,#1f6b63,#143f6b,#241046,#143f6b); }
+
+/* the karst/flowstone PHOTO backdrop — this is what parallax/static acts on */
+.bg-image{ position:fixed; left:0; right:0; top:-25%; height:150%; z-index:0; background-size:cover; background-position:center;
+  opacity:var(--img-op,0); filter:grayscale(.35) contrast(1.05); will-change:transform; }
+html[data-backdrop="karst"]     .bg-image{ background-image:url(assets/springtail.jpg); --img-op:.16; }
+html[data-backdrop="flowstone"] .bg-image{ background-image:url(assets/flowstone.jpg);  --img-op:.18; }
+html[data-backdrop="none"]      .bg-image{ --img-op:0; }
+html[data-scroll="parallax"] .bg-image{ transform:translateY(var(--par,0)); }   /* JS drives --par, slower than scroll */
+html[data-scroll="static"]   .bg-image{ transform:none; }                       /* pinned: static background scrolling */
+
+@media (prefers-reduced-motion: reduce){ .bg-layer{ animation:none !important; } }
+
+/* ============================================================
+   BASE
+   ============================================================ */
+*{ box-sizing:border-box; }
+html,body{ margin:0; }
+body{ background:var(--bg); color:var(--text); font-family:var(--font-body);
+  font-size:15.5px; line-height:var(--bls,1.5); -webkit-font-smoothing:antialiased;
+  transition:background .35s ease, color .35s ease; }
+a{ color:var(--accent); text-decoration:none; }
+a:hover{ text-decoration:underline; text-underline-offset:3px; }
+.display{ font-family:var(--font-display); font-weight:var(--dw); letter-spacing:var(--dtrack); line-height:var(--dlh); }
+
+/* ============================================================
+   CONTROL BAR
+   ============================================================ */
+.controls{ position:sticky; top:0; z-index:50; background:var(--bar, var(--surface));
+  border-bottom:1px solid var(--line); padding:11px clamp(12px,3vw,24px);
+  display:flex; flex-wrap:wrap; gap:14px 22px; align-items:flex-end; }
+.cgroup{ display:flex; flex-direction:column; gap:5px; }
+.clabel{ font-size:9.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); }
+.seg{ display:flex; gap:3px; flex-wrap:wrap; }
+.seg button{ font:inherit; font-family:var(--font-body); font-size:12px; border:1px solid var(--line); background:transparent;
+  color:var(--muted); padding:5px 10px; border-radius:7px; cursor:pointer; transition:all .16s ease; white-space:nowrap; }
+.seg button:hover{ color:var(--text); border-color:var(--muted); }
+.seg button[aria-pressed="true"]{ background:var(--accent); color:#fff; border-color:var(--accent); }
+.readout{ margin-left:auto; font-size:11.5px; color:var(--muted); text-align:right; line-height:1.5; }
+.readout b{ color:var(--text); }
+
+/* ============================================================
+   STAGE  (flat: no card, no shadow, no surface separation)
+   ============================================================ */
+.bg-image, .bg-layer{ pointer-events:none; }
+.stagewrap{ position:relative; z-index:1; padding:0 clamp(10px,3vw,26px) 90px; display:flex; justify-content:center; }
+.stage{ width:100%; max-width:1060px; background:color-mix(in srgb, var(--bg) 88%, transparent);
+  transition:max-width .4s cubic-bezier(.6,.1,.2,1); }
+html[data-view="phone"] .stage{ max-width:392px; }
+
+/* navbar — minimal, flat */
+.nav{ display:flex; align-items:center; gap:20px; padding:18px 4px; margin-bottom:8px; }
+.brand{ font-family:var(--font-display); font-weight:var(--dw); letter-spacing:var(--dtrack); font-size:19px; }
+.menu{ display:flex; gap:18px; margin-left:6px; font-size:13px; }
+.menu a{ color:var(--text); opacity:.82; }
+.menu a:hover{ opacity:1; color:var(--accent); text-decoration:none; }
+.navright{ margin-left:auto; display:flex; align-items:center; gap:14px; }
+.lang{ font-size:11.5px; color:var(--muted); letter-spacing:.04em; } .lang b{ color:var(--text); }
+.burger{ display:none; flex-direction:column; gap:4px; background:none; border:0; cursor:pointer; padding:4px; }
+.burger span{ width:21px; height:2px; background:var(--text); display:block; }
+html[data-view="phone"] .menu{ display:none; } html[data-view="phone"] .burger{ display:flex; }
+
+/* hero */
+.hero{ padding:clamp(40px,9vw,110px) 4px clamp(28px,5vw,56px); }
+.hero h1{ font-size:clamp(50px,10vw,118px); margin:0 0 14px; }
+html[data-liquid="on"] .hero h1{ filter:url(#waterFlow); }
+.tagline{ font-size:clamp(15px,2vw,19px); color:var(--muted); max-width:34ch; margin:0; }
+
+/* puddle photos with ripple-on-hover */
+.puddles{ display:flex; gap:16px; flex-wrap:wrap; padding:6px 4px 30px; }
+.puddle{ position:relative; width:138px; height:138px; cursor:pointer; }
+.puddle img{ width:100%; height:100%; object-fit:cover; transition:filter .3s ease; filter:saturate(1.05);
+  clip-path:path("M69,3 C103,3 135,28 135,67 C135,103 107,135 69,135 C33,135 3,105 3,67 C3,30 35,3 69,3 Z"); }
+.puddle:hover img{ filter:url(#ripple) saturate(1.1); }
+.puddle .play{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .3s; pointer-events:none; }
+.puddle:hover .play{ opacity:1; }
+.puddle .play span{ width:38px; height:38px; border-radius:50%; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; }
+.cap{ font-size:10.5px; color:var(--muted); text-align:center; margin-top:7px; }
+
+/* sections — separated only by space + a coloured kicker, no borders, no fills */
+.sec{ padding:clamp(24px,5vw,52px) 4px 0; }
+.kicker{ font-size:10.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); margin:0 0 16px; }
+.sec h2{ font-size:clamp(24px,4vw,38px); margin:0 0 18px; }
+
+/* project preview — flat */
+.card{ display:grid; grid-template-columns:220px 1fr; gap:22px; align-items:start; }
+html[data-view="phone"] .card{ grid-template-columns:1fr; }
+.card img{ width:100%; height:188px; object-fit:cover; }
+.card h3{ font-family:var(--font-display); font-weight:var(--dw); letter-spacing:var(--dtrack); font-size:27px; margin:0 0 4px; }
+.with{ color:var(--muted); font-size:13px; margin:0 0 2px; }
+.yr{ color:var(--accent2); font-size:12px; font-weight:700; letter-spacing:.05em; margin:0 0 12px; }
+.card p{ margin:0 0 12px; max-width:54ch; }
+
+/* TAGS — small, minimal, no frames */
+.tags{ display:flex; flex-wrap:wrap; gap:3px 16px; font-size:12px; letter-spacing:.01em; }
+.tag{ color:var(--muted); cursor:pointer; padding:2px 0; transition:color .15s ease; }
+.tag:hover{ color:var(--text); }
+.tag.on{ color:var(--accent); }
+.metatags{ font-size:11.5px; color:var(--muted); letter-spacing:.02em; }
+
+/* events */
+.events{ display:flex; flex-direction:column; }
+.ev{ display:flex; gap:14px; padding:11px 0; font-size:14px; align-items:baseline; border-bottom:1px solid color-mix(in srgb,var(--line) 60%, transparent); }
+.ev:last-child{ border-bottom:0; }
+.ev .d{ flex:0 0 88px; color:var(--accent2); font-weight:700; font-size:12px; letter-spacing:.02em; }
+.ev .w{ flex:1; } .ev .w b{ font-weight:700; } .ev .more{ white-space:nowrap; }
+html[data-view="phone"] .ev{ flex-wrap:wrap; } html[data-view="phone"] .ev .d{ flex-basis:100%; }
+
+/* timeline strata (sedimentation — kept) */
+.strata{ display:flex; flex-direction:column; gap:2px; }
+.band{ position:relative; padding:18px 18px; color:#fff; overflow:hidden; }
+.band::before{ content:""; position:absolute; inset:0; background-image:url(assets/flowstone.jpg); background-size:cover; background-position:center; filter:grayscale(.25) brightness(.6) contrast(1.1); }
+.band::after{ content:""; position:absolute; inset:0; background:linear-gradient(90deg, color-mix(in srgb,var(--accent) 60%, #000 25%), transparent 78%); }
+.band>*{ position:relative; z-index:1; }
+.band .yrn{ font-family:var(--font-display); font-weight:var(--dw); letter-spacing:var(--dtrack); font-size:28px; }
+.band small{ display:block; opacity:.92; font-size:12px; margin-top:3px; }
+
+/* reading specimen */
+.specimen{ max-width:64ch; } .specimen p{ margin:0 0 12px; }
+.foot{ padding:34px 4px 10px; color:var(--muted); font-size:12px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; align-items:center; }
+.swatches{ display:flex; border:1px solid var(--line); border-radius:6px; overflow:hidden; }
+.sw{ width:42px; height:26px; }
+.scrollnote{ text-align:center; color:var(--muted); font-size:11px; letter-spacing:.14em; text-transform:uppercase; padding:30px 0 0; }
+</style>
+</head>
+<body>
+
+<!-- background layers -->
+<div class="bg-layer"><div class="bg-grad"></div></div>
+<div class="bg-image"></div>
+
+<!-- liquid + ripple filters -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <filter id="waterFlow"><feTurbulence type="fractalNoise" baseFrequency="0.011 0.022" numOctaves="2" seed="7" result="n">
+    <animate attributeName="baseFrequency" dur="16s" values="0.011 0.022;0.016 0.013;0.011 0.022" repeatCount="indefinite"/></feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="12" xChannelSelector="R" yChannelSelector="G"/></filter>
+  <filter id="ripple"><feTurbulence type="turbulence" baseFrequency="0.02 0.04" numOctaves="2" seed="3" result="n">
+    <animate attributeName="baseFrequency" dur="3.5s" values="0.02 0.04;0.035 0.02;0.02 0.04" repeatCount="indefinite"/></feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="18" xChannelSelector="R" yChannelSelector="G"/></filter>
+</defs></svg>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <div class="cgroup"><span class="clabel">Palette</span><div class="seg" data-set="palette">
+    <button data-v="iridescent" aria-pressed="true">Iridescent</button>
+    <button data-v="deepwater">Deep Water</button>
+    <button data-v="nacre">Nacre</button>
+    <button data-v="karst">Karst</button>
+    <button data-v="flowstone">Flowstone</button>
+    <button data-v="springtail">Springtail</button>
+    <button data-v="shades">Shades</button>
+  </div></div>
+  <div class="cgroup"><span class="clabel">Type (compact)</span><div class="seg" data-set="type">
+    <button data-v="grotesk" aria-pressed="true">Grotesk</button>
+    <button data-v="condensed">Condensed</button>
+    <button data-v="character">Character</button>
+  </div></div>
+  <div class="cgroup"><span class="clabel">Mode</span><div class="seg" data-set="mode">
+    <button data-v="light">Light</button><button data-v="dark" aria-pressed="true">Dark</button>
+  </div></div>
+  <div class="cgroup"><span class="clabel">Backdrop photo</span><div class="seg" data-set="backdrop">
+    <button data-v="none">None</button><button data-v="karst" aria-pressed="true">Karst</button><button data-v="flowstone">Flowstone</button>
+  </div></div>
+  <div class="cgroup"><span class="clabel">Scroll effect</span><div class="seg" data-set="scroll">
+    <button data-v="static" aria-pressed="true">Static (fixed)</button><button data-v="parallax">Parallax</button>
+  </div></div>
+  <div class="cgroup"><span class="clabel">Colour shift on scroll</span><div class="seg" data-set="cshift">
+    <button data-v="on" aria-pressed="true">On</button><button data-v="off">Off</button>
+  </div></div>
+  <div class="cgroup"><span class="clabel">Liquid headline</span><div class="seg" data-set="liquid">
+    <button data-v="on">On</button><button data-v="off" aria-pressed="true">Off</button>
+  </div></div>
+  <div class="cgroup"><span class="clabel">Width</span><div class="seg" data-set="view">
+    <button data-v="desktop" aria-pressed="true">Desktop</button><button data-v="phone">Phone</button>
+  </div></div>
+  <div class="readout" id="readout"></div>
+</div>
+
+<!-- STAGE -->
+<div class="stagewrap"><div class="stage">
+
+  <nav class="nav">
+    <span class="brand">Anna Jurkiewicz</span>
+    <span class="menu"><a href="#">Artistic Research</a><a href="#">Voice &amp; Performance</a><a href="#">Voice &amp; Music</a><a href="#">Works</a><a href="#">Contact</a></span>
+    <span class="navright"><span class="lang"><b>EN</b> / PL</span><button class="burger" aria-label="menu"><span></span><span></span><span></span></button></span>
+  </nav>
+
+  <header class="hero">
+    <h1 class="display">Anna Jurkiewicz</h1>
+    <p class="tagline">Interdisciplinary artist. Voice, video, writing, performance and sound.</p>
+  </header>
+
+  <div class="puddles">
+    <figure style="margin:0"><div class="puddle"><img src="assets/tallatom.jpg" alt=""><span class="play"><span>&#9658;</span></span></div><figcaption class="cap">hover to ripple</figcaption></figure>
+    <figure style="margin:0"><div class="puddle"><img src="assets/springtail.jpg" alt=""><span class="play"><span>&#9658;</span></span></div><figcaption class="cap">tap to play sound</figcaption></figure>
+    <figure style="margin:0"><div class="puddle"><img src="assets/flowstone.jpg" alt=""><span class="play"><span>&#9658;</span></span></div><figcaption class="cap">portals into works</figcaption></figure>
+  </div>
+
+  <section class="sec">
+    <p class="kicker">Selected work</p>
+    <div class="card">
+      <img src="assets/tallatom.jpg" alt="Tallatom performance">
+      <div>
+        <h3>Tallatom</h3>
+        <p class="with">with Maryam Farhang, Goha Goździk, Eva Ursprung</p>
+        <p class="yr">2025 – 2026</p>
+        <p>Three artists transform the Badehaus into an intimate space through stories, poetry, sound and movement, opening a collective exploration of the emotional turbulences that surface in dreams of dark waters.</p>
+        <p class="metatags">voice / performance / water / collaboration</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <p class="kicker">Works, by tag</p>
+    <div class="tags">
+      <span class="tag on">voice</span><span class="tag">video</span><span class="tag">words</span>
+      <span class="tag">performance</span><span class="tag">soundwalk</span><span class="tag">score</span>
+      <span class="tag">lecture-performance</span><span class="tag">workshop</span><span class="tag">karst</span>
+      <span class="tag">springtails</span><span class="tag">solo</span><span class="tag">ZYEM</span>
+    </div>
+  </section>
+
+  <section class="sec">
+    <p class="kicker">Upcoming</p>
+    <div class="events">
+      <div class="ev"><span class="d">24 Jun 2026</span><span class="w"><b>Tallatom</b> performance / Sargfabrik, Vienna, AT</span><a class="more" href="#">tickets &rarr;</a></div>
+      <div class="ev"><span class="d">27 Jun 2026</span><span class="w"><b>o vo ice o vo wel</b> (lecture-performance) / Forum Artistic Research, Klagenfurt, AT</span></div>
+      <div class="ev"><span class="d">Jul 2026</span><span class="w"><b>Missing Meanders</b> residency (ReSide programme) / Brno, CZ</span></div>
+      <div class="ev"><span class="d">22 Aug 2026</span><span class="w"><b>Zaświatycze</b> with electronics and shadow theatre / Re:Tradycja, Lublin, PL</span><a class="more" href="#">more &rarr;</a></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <p class="kicker">Timeline — sediment of years</p>
+    <div class="strata">
+      <div class="band"><span class="yrn">2026</span><small>Voicing Places · ZYEM · Tallatom · lecture-performances</small></div>
+      <div class="band"><span class="yrn">2025</span><small>steirischer herbst · CTM Berlin · Somaphon · residency in Sweden</small></div>
+      <div class="band"><span class="yrn">2024</span><small>The Door (caves) · The Color of B Flat · Red Thread · summer school</small></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <p class="kicker">Reading</p>
+    <div class="specimen">
+      <p>Since 2019, Anna Jurkiewicz explores landscapes created by water through deep-time processes of dissolution and sedimentation, especially karst as a hydro-acoustic porous environment.</p>
+      <p>Many of her projects focus on multispecies relations that produce space and habitats, strengthening interspecies empathy through sensory walks, collective mapping, ecopoetry and participatory scores for embodied cognition.</p>
+    </div>
+    <p class="scrollnote">scroll to see the background move</p>
+  </section>
+
+  <footer class="foot">
+    <span>Anna Jurkiewicz · she/her · Vienna / Warsaw</span>
+    <div class="swatches" id="swatches"></div>
+  </footer>
+
+</div></div>
+
+<script>
+const root = document.documentElement;
+if (window.matchMedia('(prefers-reduced-motion: reduce)').matches){ root.setAttribute('data-liquid','off'); }
+
+document.querySelectorAll('.seg').forEach(seg=>{
+  const key = seg.dataset.set;
+  seg.addEventListener('click', e=>{
+    const btn = e.target.closest('button'); if(!btn) return;
+    root.setAttribute('data-'+key, btn.dataset.v);
+    seg.querySelectorAll('button').forEach(b=> b.setAttribute('aria-pressed', String(b===btn)));
+    onScroll(); sync();
+  });
+});
+
+const names = {
+  palette:{iridescent:'Iridescent (oil-on-water)', deepwater:'Deep Water (gradient)', nacre:'Nacre (pearl)', karst:'Karst (warm stone)', flowstone:'Flowstone (teal)', springtail:'Springtail (gray-green)', shades:'Shades (mono)'},
+  type:{grotesk:'Space Grotesk + Inter Tight', condensed:'Big Shoulders + Archivo', character:'Familjen Grotesk + Hanken Grotesk'}
+};
+function readVar(n){ return getComputedStyle(root).getPropertyValue(n).trim(); }
+function sync(){
+  const p=root.getAttribute('data-palette'), t=root.getAttribute('data-type'), m=root.getAttribute('data-mode');
+  document.getElementById('readout').innerHTML='<b>'+names.palette[p]+'</b> · '+m+'<br>'+names.type[t];
+  const sw=document.getElementById('swatches'); sw.innerHTML='';
+  ['--bg','--text','--accent','--accent2','--muted'].forEach(v=>{ const d=document.createElement('span'); d.className='sw'; d.style.background=readVar(v); d.title=v+' '+readVar(v); sw.appendChild(d); });
+}
+
+// scroll: drive --scroll (0..1) for colour shift, and --par for parallax
+let ticking=false;
+function onScroll(){
+  const max=(document.documentElement.scrollHeight - window.innerHeight)||1;
+  const prog=Math.min(1, Math.max(0, window.scrollY/max));
+  root.style.setProperty('--scroll', prog.toFixed(4));
+  root.style.setProperty('--shift', root.getAttribute('data-cshift')==='on' ? (prog*-42).toFixed(2)+'vw' : '0px');
+  root.style.setProperty('--par', root.getAttribute('data-scroll')==='parallax' ? (window.scrollY*-0.18).toFixed(1)+'px' : '0px');
+}
+window.addEventListener('scroll', ()=>{ if(!ticking){ requestAnimationFrame(()=>{onScroll(); ticking=false;}); ticking=true; } }, {passive:true});
+
+document.querySelectorAll('.tag').forEach(c=> c.addEventListener('click', ()=> c.classList.toggle('on')));
+document.querySelector('.burger').addEventListener('click', ()=> alert('On phones the menu opens here as a full-screen overlay.'));
+onScroll(); sync();
+</script>
+</body>
+</html>
